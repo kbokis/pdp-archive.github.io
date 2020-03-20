@@ -1,3 +1,19 @@
+4
+abbb
+//5 (abbba)
+
+
+10
+abccbbabbc
+//13
+
+----------
+
+3
+abb
+//4
+
+
 10
 abccbbabbc
 //13
@@ -5,3 +21,8 @@ abccbbabbc
 6
 abcdef
 //11
+
+4
+abbb
+//5 (abbba)
+

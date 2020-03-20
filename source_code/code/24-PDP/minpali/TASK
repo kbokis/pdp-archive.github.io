@@ -16,8 +16,17 @@ TASK(
          ),
       ),
       SOLUTION(
-         name = "minpali_n_rabin_karp",
-         source = "minpali_n_rabin_karp.cc",
+         name = "minpali_nlogn_rabin_karp",
+         source = "minpali_nlogn_rabin_karp.cc",
+         passes_all,
+         lang = "c++",
+         author = PERSON(
+            name = "kbokis",
+         ),
+      ),
+      SOLUTION(
+         name = "minpali_nlogn_bin_rabin_karp",
+         source = "minpali_nlogn_bin_rabin_karp.cc",
          passes_all,
          lang = "c++",
          author = PERSON(
