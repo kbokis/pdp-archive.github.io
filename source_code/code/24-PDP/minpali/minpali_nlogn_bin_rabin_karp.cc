@@ -4,6 +4,7 @@
 #include <cctype>
 #include <map>
 #include <cmath>
+#include <cstring>
 
 #ifndef CONTEST
 	#define dprintf	printf	//allow debug printf
@@ -18,13 +19,16 @@ using namespace std;
 const long 	MAXN = long(1e7);
 long 		N;
 char 		S[MAXN+1];
-map<char,int> 	CO;	//compress input chars
+long 		C;	//factor for rabin karp poly. Has to be > number of chars
 
 typedef unsigned long long hasht;
 const hasht	MOD_VAL = hasht(1)<<32;
 const hasht	MOD = hasht(0xffffffff);	//It is imperative that MOD*MOD fit hasht typedef
+hasht right[MAXN/2+2];//right[i] = hash of substr that ends at [N-i] with length i	
+	//typical memory usage for sizeof(hasht)==8 is less than 40Mbytes
+	//so we are withing allowed limit provided that the only other array
+	//is of 10Mbytes the S[] array
 
-long 		C = 0;	//factor for rabin karp poly. Has to be > number of chars
 
 hasht powC(long n){	
 	//O(log2N) calc power of C (not enough mem to store all values in array)
@@ -55,25 +59,41 @@ bool doublecheck(long leftend,long length){
 	return true;
 }
 
-hasht right[MAXN/2+2];//right[i] = hash of substr that ends at [N-i] with length i	
-	//typical memory usage for sizeof(hasht)==8 is less than 40Mbytes
-	//so we are withing allowed limit provided that the only other array
-	//is of 10Mbytes the S[] array
+void readS(){//read and compress S[]
+	scanf("%ld %s",&N,S);
+	//compress input chars
+	C = 1;
+	int V[256];
+	memset(V,0,sizeof(V));
+	for(long i=0;i<N;++i){//compress values
+		int& cv = V[S[i]];
+		if(cv == 0)
+			cv = C++;
+		S[i] = cv;
+	}
+	C |= 1; //the binary OR with 1 makes sure that C is odd
+}
+
+void calc_reverse_hashes(){
+	//calc reverse hashes for every i in [1,N/2] for
+	//substr starting from N-i and length i
+	//This is the rightmost substr of palindrome.
+	//The max powered element is the rightmost (Rabin Karp polynomial expr)
+	//The min powered element is the leftmost (Rabin Karp polynomial expr)
+	hasht val = 0;
+	for(long i=1;i<=N/2;++i){
+		val = (val * C) & MOD;//shift prev substr (create space)
+		val = (val + S[N-i]) & MOD;//add newbie to space created
+		right[i] = val;
+	}
+}
 	
 int main(){
 #ifdef CONTEST
 	freopen("minpali.in", "r",stdin);
 	freopen("minpali.out","w",stdout);
 #endif
-	scanf("%ld %s",&N,S);
-	for(long i=0;i<N;++i){//compress values
-		int& cv = CO[S[i]];
-		if(cv == 0)
-			cv = CO.size() + 1;
-		S[i] = cv;
-	}
-	C = long(CO.size()+1) | 1;
-	//the binary or with 1 makes sure that C is odd
+	readS();
 	
 	//worst case: no part of string can be reused to build palindrome.
 	//	We will need N-1 more chars.
@@ -87,20 +107,10 @@ int main(){
 		bestcase 	= N,
 		ans 		= worstcase;
 
-	//calc reverse hashes for every i in [1,N/2] for
-	//substr starting from N-i and length i
-	//This is the rightmost substr of palindrome.
-	//The max powered element is the rightmost (Rabin Karp polynomial expr)
-	//The min powered element is the leftmost (Rabin Karp polynomial expr)
-	hasht val = 0;
-	for(long i=1;i<=N/2;++i){
-		val = (val * C) & MOD;//shift prev substr (create space)
-		val = (val + S[N-i]) & MOD;//add newbie to space created
-		right[i] = val;
-	}
+	calc_reverse_hashes();
 
-	hasht 	left 	 = 0;
 	long 	leftend  = N/2-1, length = N/2;
+	hasht 	left 	 = 0, expC = powC(length-1);
 	bool 	haspivot = (N&1);
 
 	//calc the first subst of palindrome
@@ -121,14 +131,15 @@ int main(){
 			//roll left substr 1 to the right. length not changed
 			//first step: remove maximum powered character
 			assert(N-1-length+1 == leftend+2);//right substr starts right after pivot
-			left = (left - ((powC(length-1) * S[leftend-length+1])&MOD) + MOD_VAL) & MOD;
+			left = (left - ((expC * S[leftend-length+1])&MOD) + MOD_VAL) & MOD;
 			//shift remaining value and add newbie character
 			left = (((left * C) & MOD) + S[++leftend]) & MOD;
 		} else {
 			//shrink left edge of left substr by one
 			assert(N-1-length+1 == leftend+1);//right substr starts right after leftend
-			left = (left - ((powC(length-1) * S[leftend-length+1])&MOD) + MOD_VAL) & MOD;
-			length--;
+			left = (left - ((expC * S[leftend-length+1])&MOD) + MOD_VAL) & MOD;
+			--length;
+			expC = powC(length-1);//length changed, recalc exponent of max element
 		}
 		haspivot = !haspivot;
 	}

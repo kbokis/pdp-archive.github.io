@@ -34,8 +34,8 @@ TASK(
          ),
       ),
       SOLUTION(
-         name = "minpali_n_kmp",
-         source = "minpali_n_kmp.cc",
+         name = "minpali_n_z",
+         source = "minpali_n_z.cc",
          passes_all,
          lang = "c++",
          author = PERSON(
