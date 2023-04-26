@@ -1,0 +1,22 @@
+TASK(
+   name = "chemicals",
+   test_count = 23,
+   files_dir = "testdata/35-PDP/chemicals/",
+   input_file = "chemicals.in",
+   output_file = "chemicals.out",
+   time_limit = 1,
+   solutions = [
+      SOLUTION(
+         name = "chemicals_brute_force",
+         source = "chemicals_brute_force.cc",
+         passes_up_to = 23,
+         lang = "c++",
+      ),
+      SOLUTION(
+         name = "chemicals_two_pointers",
+         source = "chemicals_two_pointers.cc",
+         passes_all,
+         lang = "c++",
+      ),
+   ]
+)

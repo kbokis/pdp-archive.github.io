@@ -39,11 +39,11 @@ chemicals:
    statement_pdf_url: "https://drive.google.com/file/d/1J51Vu6wF3_dN7hx4EIYmIbKcPx6oJIOd/view"
    statement_md: true
    testcases_url: "https://drive.google.com/file/d/1m-Xi5HsiYEi0sviWEvkVz3YuGZ5fQAAf/view"
-   solution: false
-   solution_author: ""   
+   solution: true
+   solution_author: "Μποκής Κωνσταντίνος"   
    codes_in_git: false
    points: 30
-   solution_tags: ["set", "modulo", "sliding window", "two pointers"]
+   solution_tags: ["set", "modulo", "sliding window", "two pointers", "greedy"]
    on_judge: false
 
 islands:
